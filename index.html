@@ -214,20 +214,14 @@ async function generate() {
   const prix = document.getElementById('prix').value;
   const taille = document.getElementById('taille').value;
   const logos = document.getElementById('logos').value;
-  const mPoitrine = document.getElementById('m-poitrine').value;
+  const mLargeur = document.getElementById('m-poitrine').value;
   const mLongueur = document.getElementById('m-longueur').value;
   const mManches = document.getElementById('m-manches').value;
-  const mEpaules = document.getElementById('m-epaules').value;
-  const mTaille = document.getElementById('m-taille').value;
-  const mHanches = document.getElementById('m-hanches').value;
 
   const mesuresList = [];
-  if (mPoitrine) mesuresList.push('* Poitrine / largeur : ' + mPoitrine);
-  if (mLongueur) mesuresList.push('* Longueur totale : ' + mLongueur);
+  if (mLargeur) mesuresList.push('* Largeur : ' + mLargeur);
+  if (mLongueur) mesuresList.push('* Longueur : ' + mLongueur);
   if (mManches) mesuresList.push('* Longueur manches : ' + mManches);
-  if (mEpaules) mesuresList.push('* Largeur épaules : ' + mEpaules);
-  if (mTaille) mesuresList.push('* Tour de taille : ' + mTaille);
-  if (mHanches) mesuresList.push('* Tour de hanches : ' + mHanches);
   const mesuresBlock = mesuresList.length > 0 ? mesuresList.join('\n') : '* Non renseignées — demandez si besoin';
 
   setLoading(true);
