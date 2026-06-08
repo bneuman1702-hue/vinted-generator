@@ -306,9 +306,9 @@ async function generate() {
   const mManches = document.getElementById('m-manches').value;
 
   const mesuresList = [];
-  if (mLargeur) mesuresList.push('* Largeur : ' + mLargeur);
-  if (mLongueur) mesuresList.push('* Longueur : ' + mLongueur);
-  if (mManches) mesuresList.push('* Longueur manches : ' + mManches);
+  if (mLargeur) mesuresList.push('📐 Largeur : ' + mLargeur);
+  if (mLongueur) mesuresList.push('📐 Longueur : ' + mLongueur);
+  if (mManches) mesuresList.push('📐 Longueur manches : ' + mManches);
   const mesuresBlock = mesuresList.length > 0 ? mesuresList.join('\n') : '* Non renseignées — demandez si besoin';
 
   setLoading(true);
@@ -331,7 +331,7 @@ async function generate() {
     + 'Emoji marque a utiliser (choisir le bon selon la marque) : ' + emojiList + '\n\n'
     + 'Reponds UNIQUEMENT en JSON valide, sans markdown ni backticks :\n'
     + '{\n'
-    + '  "titre": "max 60 caracteres. Format : [emoji marque] [Marque] [type article] [couleur] [taille]. Ex: 🐎 Ralph Lauren Pull Col V Creme M. Pro, accrocheur, optimise algo Vinted.",\n'
+    + '  "titre": "max 60 caracteres STRICT. Titre accrocheur et pro qui utilise TOUS ces elements : emoji marque + type article + detail coupe/style + couleur/motif + matiere OBLIGATOIRE si fournie + marque + taille. Ordre flexible, choisis le plus naturel. Tu PEUX mixer francais et anglais si ca sonne mieux (ex: Knit, Sweater, Vintage, Denim, Oversized, Cropped, Hoodie, Tee, Cargo...). Exemples : 🐎 Knit Col V Coton Creme Ralph Lauren M / 🔺 Silk Dress Fleurie Prada L / 🌿 Vintage Denim Jacket Levis 501 M. JAMAIS de mots vagues ou redondants.",\n'
     + '  "description": "Format exact avec emojis :\n\n'
     + emoji + ' [Marque] — [type article] [modele si connu] ' + emoji + '\n\n'
     + '* Taille : [taille + conseil coupe si pertinent]\n'
@@ -339,12 +339,12 @@ async function generate() {
     + '* Matiere : [' + matiereInfo + ' + qualite en 1 phrase]\n'
     + '* Etat : [' + etat + '] — description honnete et precise\n'
     + logosLine
-    + '\n📏 Mesures a plat :\n\n' + mesuresBlock + '",\n'
-    + '  "hashtags_fr": "EXACTEMENT 15 hashtags en francais. Toutes declinaisons du type vetement (ex pull: #pull #pullhomme #pullfemme #pullvintage #pulllaine), marque (#ralphlauren #rl), couleur, matiere, style. Format : #tag1 #tag2 #tag3...",\n'
-    + '  "hashtags_en": "EXACTEMENT 15 hashtags en anglais. Memes concepts : type vetement en anglais toutes declinaisons (pull=sweater,knit,knitwear,jumper,pullover), marque, couleur, style, matiere. Format : #tag1 #tag2 #tag3...",\n'
-    + '  "hashtags_es": "EXACTEMENT 15 hashtags en espagnol. Type vetement toutes declinaisons en espagnol, marque, couleur, style. Format : #tag1 #tag2 #tag3...",\n'
-    + '  "hashtags_it": "EXACTEMENT 15 hashtags en italien. Type vetement toutes declinaisons en italien, marque, couleur, style. Format : #tag1 #tag2 #tag3...",\n'
-    + '  "hashtags_de": "EXACTEMENT 15 hashtags en allemand. Type vetement toutes declinaisons en allemand, marque, couleur, style. Format : #tag1 #tag2 #tag3..."\n'
+    + '",\n'
+    + '  "hashtags_fr": "EXACTEMENT 15 hashtags en francais. PRIORITE 1 (5 tags min) : type+marque colles ex #robeprada #pradarobe #robezara. PRIORITE 2 (6 tags min) : declinaisons type seul #robe #robefemme #robechic #robedete #robelongue #robecourte #robeelegante. PRIORITE 3 : marque seule #prada. Puis couleur+type #robebleue, matiere+type #robesoie. ZERO mot generique seul. Format : #tag1 #tag2 #tag3...",\n'
+    + '  "hashtags_en": "EXACTEMENT 15 hashtags en anglais. PRIORITE 1 (5 tags min) : type+marque colles ex #pradadress #zaradress #dressbyprada. PRIORITE 2 (6 tags min) : declinaisons type seul #dress #womensdress #floralsdress #silkdress #summerdress #minidress #maxidress. PRIORITE 3 : marque seule. Puis couleur+type, matiere+type. ZERO mot generique seul. Format : #tag1 #tag2 #tag3...",\n'
+    + '  "hashtags_es": "EXACTEMENT 15 hashtags en espagnol. PRIORITE 1 (5 tags min) : type+marque colles ex #vestidoprada #pradavestido. PRIORITE 2 (6 tags min) : declinaisons type seul #vestido #vestidofemenino #vestidofloral #vestidolargo #vestidocorto #vestidoverano. PRIORITE 3 : marque seule. ZERO mot generique seul. Format : #tag1 #tag2 #tag3...",\n'
+    + '  "hashtags_it": "EXACTEMENT 15 hashtags en italien. PRIORITE 1 (5 tags min) : type+marque colles ex #vestitoprada #pradavestito. PRIORITE 2 (6 tags min) : declinaisons type seul #vestito #vestitodonna #vestitofiorato #vestitoseta #vestitoestivo #vestitolungo. PRIORITE 3 : marque seule. ZERO mot generique seul. Format : #tag1 #tag2 #tag3...",\n'
+    + '  "hashtags_de": "EXACTEMENT 15 hashtags en allemand. PRIORITE 1 (5 tags min) : type+marque colles ex #pradakleid #kleidentwurf. PRIORITE 2 (6 tags min) : declinaisons type seul #kleid #damenkleid #blumenkleid #seidenkleid #sommerkleid #abendkleid. PRIORITE 3 : marque seule. ZERO mot generique seul. Format : #tag1 #tag2 #tag3..."\n'
     + '}';
 
   try {
@@ -375,7 +375,18 @@ async function generate() {
       + parsed.hashtags_it + '\n'
       + parsed.hashtags_de;
 
-    document.getElementById('r-desc').textContent = parsed.description + '\n' + SIGNATURE + hashtags;
+    // Inject fixed mesures into description (never touch model output for measures)
+    let desc = parsed.description;
+    if (mesuresBlock.trim() !== '* Non renseignées — demandez si besoin') {
+      desc = desc.replace('[MESURES_PLACEHOLDER]', '📏 Mesures à plat :\n\n' + mesuresBlock);
+    } else {
+      desc = desc.replace('[MESURES_PLACEHOLDER]', '📏 Mesures à plat :\n\n* Non renseignées — demandez si besoin');
+    }
+    // If placeholder not found (model removed it), append manually
+    if (!desc.includes('📏')) {
+      desc = desc + '\n\n📏 Mesures à plat :\n\n' + mesuresBlock;
+    }
+    document.getElementById('r-desc').textContent = desc + '\n' + SIGNATURE + hashtags;
 
     document.getElementById('err').style.display = 'none';
     document.getElementById('results').style.display = 'block';
