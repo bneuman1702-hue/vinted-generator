@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vinted Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0e0e0e; --surface: #161616; --surface2: #1e1e1e;
+    --border: #2a2a2a; --border2: #333; --text: #f0ede8;
+    --muted: #888; --accent: #c9f564; --accent-dim: rgba(201,245,100,0.1);
+    --red: #ff5f5f; --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; }
+  .app { width: 100%; max-width: 700px; }
+  .header { margin-bottom: 32px; }
+  .header h1 { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+  .header h1 span { color: var(--accent); }
+  .header p { font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+  .api-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
+  .api-bar label { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+  .api-bar input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 13px; outline: none; }
+  .api-bar input:focus { border-color: var(--accent); }
+  .api-status { font-size: 11px; font-family: 'DM Mono', monospace; white-space: nowrap; }
+  .api-status.ok { color: var(--accent); }
+  .api-status.err { color: var(--red); }
+  .clear-btn { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; cursor: pointer; white-space: nowrap; }
+  .clear-btn:hover { color: var(--red); border-color: var(--red); }
+
+  .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  .section-title { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .form-label { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 7px; display: block; }
+  .form-row { margin-bottom: 16px; }
+  .form-row:last-child { margin-bottom: 0; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  textarea, select, input[type="text"] { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 13px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.15s; }
+  textarea:focus, select:focus, input[type="text"]:focus { border-color: var(--accent); }
+  textarea { resize: vertical; }
+  select { cursor: pointer; }
+  select option { background: #1e1e1e; }
+  .hint { font-size: 11px; color: var(--muted); margin-top: 5px; font-family: 'DM Mono', monospace; }
+
+  .signature-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--muted); line-height: 1.8; white-space: pre-wrap; }
+  .signature-preview strong { color: var(--text); font-weight: 400; }
+
+  .gen-btn { width: 100%; padding: 14px; background: var(--accent); color: #0e0e0e; border: none; border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.1s; }
+  .gen-btn:hover { opacity: 0.9; }
+  .gen-btn:active { transform: scale(0.99); }
+  .gen-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .results { margin-top: 20px; display: none; }
+  .result-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 12px; animation: fadeUp 0.3s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .result-block:nth-child(2) { animation-delay: 0.06s; }
+  .result-block:nth-child(3) { animation-delay: 0.12s; }
+  .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .result-tag { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent-dim); padding: 3px 9px; border-radius: 20px; }
+  .copy-btn { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+  .result-text { font-size: 14px; color: var(--text); line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+  .titre-text { font-size: 17px; font-weight: 500; line-height: 1.4; }
+  .char-info { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 6px; }
+
+  .spinner-wrap { text-align: center; padding: 20px 0; display: none; }
+  .spinner { width: 28px; height: 28px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner-label { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 10px; }
+  .err-msg { background: rgba(255,95,95,0.08); border: 1px solid rgba(255,95,95,0.3); border-radius: var(--radius); padding: 12px 16px; font-size: 13px; color: var(--red); margin-top: 14px; display: none; }
+  .footer { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--border2); text-align: center; margin-top: 30px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>vinted<span>_</span>generator</h1>
+    <p>Titre · Description · 50 hashtags FR/EN/ES/IT — optimisés pour l'algo Vinted</p>
+  </div>
+
+  <div class="api-bar">
+    <label>API KEY</label>
+    <input type="password" id="api-key" placeholder="sk-ant-api03-..." oninput="onKeyInput()" />
+    <span class="api-status" id="key-status">—</span>
+    <button class="clear-btn" onclick="clearKey()">effacer</button>
+  </div>
+
+  <!-- ARTICLE -->
+  <div class="form-card">
+    <div class="section-title">Article</div>
+    <div class="form-row">
+      <label class="form-label">Description</label>
+      <textarea id="article" placeholder="Ex: pull col V Ralph Lauren crème, logo brodé poitrine, coton, vintage 90s" rows="3"></textarea>
+    </div>
+    <div class="grid3 form-row">
+      <div>
+        <label class="form-label">Catégorie</label>
+        <select id="cat">
+          <option value="vêtement homme">Vêtement homme</option>
+          <option value="vêtement femme">Vêtement femme</option>
+          <option value="chaussures">Chaussures</option>
+          <option value="accessoire">Accessoire</option>
+          <option value="sac">Sac</option>
+          <option value="parfum">Parfum</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">État</label>
+        <select id="etat">
+          <option value="neuf avec étiquette">Neuf avec étiquette</option>
+          <option value="neuf sans étiquette">Neuf sans étiquette</option>
+          <option value="très bon état" selected>Très bon état</option>
+          <option value="bon état">Bon état</option>
+          <option value="satisfaisant">Satisfaisant</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">Prix</label>
+        <input type="text" id="prix" placeholder="Ex: 25€" />
+      </div>
+    </div>
+    <div class="grid2 form-row">
+      <div>
+        <label class="form-label">Taille étiquette</label>
+        <input type="text" id="taille" placeholder="Ex: M, L, 42, 10 US..." />
+      </div>
+      <div>
+        <label class="form-label">Mesures réelles (à plat)</label>
+        <input type="text" id="mesures" placeholder="Ex: poitrine 54cm, longueur 65cm" />
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Logos / Détails visuels</label>
+      <input type="text" id="logos" placeholder="Ex: logo brodé poitrine, patch dos, étiquette col vintage..." />
+    </div>
+  </div>
+
+  <!-- SIGNATURE -->
+  <div class="form-card">
+    <div class="section-title">Signature vendeur — aperçu</div>
+    <div class="signature-preview" id="sig-preview"></div>
+    <div class="hint" style="margin-top:10px;">Ajoutée automatiquement en bas de chaque description.</div>
+  </div>
+
+  <button class="gen-btn" id="gen-btn" onclick="generate()">⚡ Générer l'annonce</button>
+  <div class="err-msg" id="err"></div>
+  <div class="spinner-wrap" id="spinner">
+    <div class="spinner"></div>
+    <div class="spinner-label">génération en cours...</div>
+  </div>
+
+  <div class="results" id="results">
+    <div class="result-block">
+      <div class="result-header">
+        <span class="result-tag">Titre</span>
+        <button class="copy-btn" onclick="copyEl('r-titre', this)">copier</button>
+      </div>
+      <div class="result-text titre-text" id="r-titre"></div>
+      <div class="char-info" id="r-chars"></div>
+    </div>
+    <div class="result-block">
+      <div class="result-header">
+        <span class="result-tag">Description + Hashtags</span>
+        <button class="copy-btn" onclick="copyEl('r-desc', this)">copier</button>
+      </div>
+      <div class="result-text" id="r-desc"></div>
+    </div>
+  </div>
+
+  <div class="footer">clé stockée uniquement dans ton navigateur (localStorage) · aucune donnée envoyée ailleurs</div>
+</div>
+
+<script>
+const KEY_STORAGE = 'vinted_gen_api_key';
+
+const SIGNATURE = `——————————————————
+🏷️ -5% pour les abonnés · Réductions sur les lots disponibles !
+✅ Articles authentiques — vérification Vinted disponible dès 100€
+🏠 Maison non-fumeur, sans animaux
+🚀 Expédition rapide et soignée sous 24-48h
+🤝 Merci pour votre confiance — n'hésitez pas pour des questions ou photos supplémentaires !`;
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('sig-preview').textContent = SIGNATURE;
+  const saved = localStorage.getItem(KEY_STORAGE);
+  if (saved) { document.getElementById('api-key').value = saved; setKeyStatus(saved); }
+});
+
+function onKeyInput() {
+  const key = document.getElementById('api-key').value.trim();
+  if (key.startsWith('sk-ant-') && key.length > 20) localStorage.setItem(KEY_STORAGE, key);
+  setKeyStatus(key);
+}
+
+function setKeyStatus(key) {
+  const s = document.getElementById('key-status');
+  if (key.startsWith('sk-ant-') && key.length > 20) { s.textContent = '✓ sauvegardée'; s.className = 'api-status ok'; }
+  else if (key.length > 0) { s.textContent = '✗ format invalide'; s.className = 'api-status err'; }
+  else { s.textContent = '—'; s.className = 'api-status'; }
+}
+
+function clearKey() {
+  localStorage.removeItem(KEY_STORAGE);
+  document.getElementById('api-key').value = '';
+  setKeyStatus('');
+}
+
+async function generate() {
+  const key = document.getElementById('api-key').value.trim();
+  if (!key.startsWith('sk-ant-')) { showErr('Colle ta clé API Anthropic (commence par sk-ant-)'); return; }
+  const article = document.getElementById('article').value.trim();
+  if (!article) { showErr('Décris ton article !'); return; }
+
+  const cat = document.getElementById('cat').value;
+  const etat = document.getElementById('etat').value;
+  const prix = document.getElementById('prix').value;
+  const taille = document.getElementById('taille').value;
+  const mesures = document.getElementById('mesures').value;
+  const logos = document.getElementById('logos').value;
+
+  setLoading(true);
+
+  let infos = 'Article : ' + article + '\nCatégorie : ' + cat + '\nÉtat : ' + etat;
+  if (prix) infos += '\nPrix : ' + prix;
+  if (taille) infos += '\nTaille étiquette : ' + taille;
+  if (mesures) infos += '\nMesures réelles à plat : ' + mesures;
+  if (logos) infos += '\nLogos / détails visuels : ' + logos;
+
+  const logosLine = logos ? '* Logos & détails : [décrire logos, broderies, patches, étiquettes]\\n' : '';
+  const mesuresBlock = mesures
+    ? mesures.split(',').map(m => '* ' + m.trim()).join('\\n')
+    : '* Non renseignées — demandez si besoin';
+
+  const prompt = 'Tu es expert en vente Vinted et rédaction d\'annonces mode seconde main. Génère une annonce complète.\n\n'
+    + 'Informations :\n' + infos + '\n\n'
+    + 'Réponds UNIQUEMENT en JSON valide, sans markdown ni backticks :\n'
+    + '{\n'
+    + '  "titre": "max 60 caractères. Priorité : marque + type article + couleur + taille. Accrocheur, direct, optimisé algo Vinted. Pas d\'adjectifs vagues.",\n'
+    + '  "description": "Format exact avec emojis et sauts de ligne :\\n\\n'
+    + '✨ [Marque] — [type article] [modèle si connu] ✨\\n\\n'
+    + '* Taille : [taille étiquette + conseil coupe si pertinent]\\n'
+    + '* Couleur : [couleur + ambiance visuelle]\\n'
+    + '* Matière : [composition + qualité en 1 phrase]\\n'
+    + '* État : [' + etat + '] — description honnête, valorise le charme si vintage\\n'
+    + logosLine
+    + '\\n📏 Mesures à plat :\\n\\n' + mesuresBlock + '",\n'
+    + '  "hashtags_fr": "15 hashtags en français uniquement. Concepts clés : type vêtement (toutes déclinaisons), marque, couleur, style. Utiles pour trouver l\'article. Format : #tag1 #tag2 sur une ligne.",\n'
+    + '  "hashtags_en": "15 hashtags en anglais uniquement. Mêmes concepts traduits. Ex pull = sweater knit knitwear. Format : #tag1 #tag2 sur une ligne.",\n'
+    + '  "hashtags_es": "10 hashtags en espagnol uniquement. Mêmes concepts traduits. Format : #tag1 #tag2 sur une ligne.",\n'
+    + '  "hashtags_it": "10 hashtags en italien uniquement. Mêmes concepts traduits. Format : #tag1 #tag2 sur une ligne."\n'
+    + '}';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1800, messages: [{ role: 'user', content: prompt }] })
+    });
+
+    if (!res.ok) { const d = await res.json(); throw new Error(d?.error?.message || `Erreur HTTP ${res.status}`); }
+
+    const data = await res.json();
+    const text = data.content.map(i => i.text || '').join('');
+    let parsed;
+    try {
+      parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
+    } catch(parseErr) {
+      throw new Error('Réponse API invalide — réessaie');
+    }
+
+    document.getElementById('r-titre').textContent = parsed.titre;
+    document.getElementById('r-chars').textContent = `${parsed.titre.length} / 60 caractères`;
+
+    const hashtags = `\n\n🇫🇷 ${parsed.hashtags_fr}\n🇬🇧 ${parsed.hashtags_en}\n🇪🇸 ${parsed.hashtags_es}\n🇮🇹 ${parsed.hashtags_it}`;
+    document.getElementById('r-desc').textContent = parsed.description + '\n' + SIGNATURE + hashtags;
+
+    document.getElementById('err').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch(e) {
+    showErr(`Erreur : ${e.message}`);
+  } finally {
+    setLoading(false);
+  }
+}
+
+function setLoading(on) {
+  document.getElementById('gen-btn').disabled = on;
+  document.getElementById('gen-btn').textContent = on ? '...' : '⚡ Générer l\'annonce';
+  document.getElementById('spinner').style.display = on ? 'block' : 'none';
+  if (on) document.getElementById('results').style.display = 'none';
+}
+
+function showErr(msg) {
+  const el = document.getElementById('err');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function copyEl(id, btn) {
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(() => {
+    btn.textContent = '✓ copié';
+    setTimeout(() => btn.textContent = 'copier', 1500);
+  });
+}
+</script>
+</body>
+</html>
