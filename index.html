@@ -42,10 +42,14 @@
   select option { background: #1e1e1e; }
   .hint { font-size: 11px; color: var(--muted); margin-top: 5px; font-family: 'DM Mono', monospace; }
   .signature-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--muted); line-height: 1.8; white-space: pre-wrap; }
-  .gen-btn { width: 100%; padding: 14px; background: var(--accent); color: #0e0e0e; border: none; border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.1s; }
+  .btn-row { display: flex; gap: 10px; margin-bottom: 0; }
+  .gen-btn { flex: 1; padding: 14px; background: var(--accent); color: #0e0e0e; border: none; border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.1s; }
   .gen-btn:hover { opacity: 0.9; }
   .gen-btn:active { transform: scale(0.99); }
   .gen-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .regen-btn { padding: 14px 20px; background: none; color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; display: none; white-space: nowrap; }
+  .regen-btn:hover { background: var(--surface2); }
+  .regen-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .results { margin-top: 20px; display: none; }
   .result-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 12px; animation: fadeUp 0.3s ease both; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -69,7 +73,7 @@
 <div class="app">
   <div class="header">
     <h1>vinted<span>_</span>generator</h1>
-    <p>Titre · Description · Hashtags FR/EN/ES/IT/DE — optimisés pour l'algo Vinted</p>
+    <p>Titre · Description · 60 hashtags FR/EN/ES/IT/DE</p>
   </div>
 
   <div class="api-bar">
@@ -83,7 +87,7 @@
     <div class="section-title">Article</div>
     <div class="form-row">
       <label class="form-label">Description</label>
-      <textarea id="article" placeholder="Ex: pull col V Ralph Lauren crème, logo brodé poitrine, coton, vintage 90s" rows="3"></textarea>
+      <textarea id="article" placeholder="Ex: pull col V Ralph Lauren crème, logo brodé poitrine, vintage 90s" rows="3"></textarea>
     </div>
     <div class="grid3 form-row">
       <div>
@@ -113,24 +117,27 @@
         <input type="text" id="prix" placeholder="Ex: 25€" />
       </div>
     </div>
-    <div class="grid2 form-row">
+    <div class="grid3 form-row">
       <div>
         <label class="form-label">Taille étiquette</label>
-        <input type="text" id="taille" placeholder="Ex: M, L, 42, 10 US..." />
+        <input type="text" id="taille" placeholder="Ex: M, L, 42..." />
       </div>
       <div>
-        <label class="form-label">Logos / Détails visuels</label>
-        <input type="text" id="logos" placeholder="Ex: logo brodé, patch dos, étiquette vintage..." />
+        <label class="form-label">Matière</label>
+        <input type="text" id="matiere" placeholder="Ex: 100% coton, laine..." />
+      </div>
+      <div>
+        <label class="form-label">Logos / Détails</label>
+        <input type="text" id="logos" placeholder="Ex: logo brodé, patch..." />
       </div>
     </div>
     <div class="form-row">
       <label class="form-label">Mesures (à plat)</label>
       <div class="grid3">
-        <input type="text" id="m-poitrine" placeholder="Largeur (ex: 54cm)" />
+        <input type="text" id="m-largeur" placeholder="Largeur (ex: 54cm)" />
         <input type="text" id="m-longueur" placeholder="Longueur (ex: 65cm)" />
         <input type="text" id="m-manches" placeholder="Manches (ex: 62cm)" />
       </div>
-
     </div>
   </div>
 
@@ -140,7 +147,10 @@
     <div class="hint" style="margin-top:10px;">Ajoutée automatiquement en bas de chaque description.</div>
   </div>
 
-  <button class="gen-btn" id="gen-btn" onclick="generate()">⚡ Générer l'annonce</button>
+  <div class="btn-row">
+    <button class="gen-btn" id="gen-btn" onclick="generate()">⚡ Générer l'annonce</button>
+    <button class="regen-btn" id="regen-btn" onclick="generate()">↺ Régénérer</button>
+  </div>
   <div class="err-msg" id="err"></div>
   <div class="spinner-wrap" id="spinner">
     <div class="spinner"></div>
@@ -178,6 +188,55 @@ const SIGNATURE = `——————————————————
 🚀 Expédition rapide et soignée sous 24-48h
 🤝 Merci pour votre confiance — n'hésitez pas pour des questions ou photos supplémentaires !`;
 
+const BRAND_EMOJIS = {
+  'ralph lauren': '🐎', 'polo ralph lauren': '🐎',
+  'lacoste': '🐊',
+  'tommy hilfiger': '⛵', 'tommy': '⛵',
+  'nike': '✔️',
+  'adidas': '🌿',
+  'stone island': '🧭',
+  'carhartt': '🔨',
+  'levi': '🔵', "levi's": '🔵',
+  'gucci': '🌿',
+  'louis vuitton': '🌸', 'lv': '🌸',
+  'balenciaga': '⚡',
+  'off-white': '🏷️', 'off white': '🏷️',
+  'supreme': '🔴',
+  'north face': '⛰️', 'the north face': '⛰️',
+  'patagonia': '🏔️',
+  'ami paris': '❤️', 'ami': '❤️',
+  'apc': '🇫🇷', 'a.p.c': '🇫🇷',
+  'isabel marant': '✨',
+  'sandro': '🌹',
+  'maje': '💫',
+  'zara': '🖤',
+  'h&m': '🌿',
+  'uniqlo': '🇯🇵',
+  'cp company': '🔭',
+  'burberry': '🌧️',
+  'versace': '🦅',
+  'prada': '🔺',
+  'dior': '🌸',
+  'chanel': '🌑',
+  'ysl': '💋', 'saint laurent': '💋',
+  'kenzo': '🌸',
+  'moncler': '🏔️',
+  'canada goose': '🪶',
+  'jordan': '🏀', 'air jordan': '🏀',
+  'new balance': '🔵',
+  'converse': '⭐',
+  'vans': '🛹',
+  'balzac': '✨', 'balzac paris': '✨',
+};
+
+function getEmoji(article) {
+  const low = article.toLowerCase();
+  for (const [brand, emoji] of Object.entries(BRAND_EMOJIS)) {
+    if (low.includes(brand)) return emoji;
+  }
+  return '✨';
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('sig-preview').textContent = SIGNATURE;
   const saved = localStorage.getItem(KEY_STORAGE);
@@ -213,8 +272,9 @@ async function generate() {
   const etat = document.getElementById('etat').value;
   const prix = document.getElementById('prix').value;
   const taille = document.getElementById('taille').value;
+  const matiere = document.getElementById('matiere').value;
   const logos = document.getElementById('logos').value;
-  const mLargeur = document.getElementById('m-poitrine').value;
+  const mLargeur = document.getElementById('m-largeur').value;
   const mLongueur = document.getElementById('m-longueur').value;
   const mManches = document.getElementById('m-manches').value;
 
@@ -226,38 +286,45 @@ async function generate() {
 
   setLoading(true);
 
+  const emoji = getEmoji(article);
+
   let infos = 'Article : ' + article + '\nCategorie : ' + cat + '\nEtat : ' + etat;
   if (prix) infos += '\nPrix : ' + prix;
-  if (taille) infos += '\nTaille etiquette : ' + taille;
-  if (logos) infos += '\nLogos et details visuels : ' + logos;
+  if (taille) infos += '\nTaille : ' + taille;
+  if (matiere) infos += '\nMatiere : ' + matiere;
+  if (logos) infos += '\nLogos et details : ' + logos;
 
+  const matiereInfo = matiere ? matiere : 'a deduire selon le type d\'article';
   const logosLine = logos ? '* Logos et details : ' + logos + '\n' : '';
+
+  const emojiList = '🐎 Ralph Lauren, 🐊 Lacoste, ⛵ Tommy Hilfiger, ✔️ Nike, 🌿 Adidas, 🔵 Levis, 🧭 Stone Island, 🔨 Carhartt, ⛰️ The North Face, 🏔️ Patagonia/Moncler, ❤️ Ami Paris, 🇫🇷 APC, ✨ Balzac Paris/Isabel Marant, 🖤 Zara, 🇯🇵 Uniqlo, 🔭 CP Company, 🌧️ Burberry, 🦅 Versace, 🔺 Prada, 🌸 Dior/Kenzo, 🌑 Chanel, 💋 YSL, 🏀 Jordan, 🔵 New Balance, ⭐ Converse, 🛹 Vans, 🌿 Gucci, ⚡ Balenciaga, 🔴 Supreme, 🌸 Louis Vuitton. Si marque inconnue utiliser ✨';
 
   const prompt = 'Tu es expert en vente Vinted et redaction annonces mode seconde main. Genere une annonce complete et optimisee.\n\n'
     + 'Informations :\n' + infos + '\n\n'
+    + 'Emoji marque a utiliser (choisir le bon selon la marque) : ' + emojiList + '\n\n'
     + 'Reponds UNIQUEMENT en JSON valide, sans markdown ni backticks :\n'
     + '{\n'
-    + '  "titre": "max 60 caracteres. Format : [emoji marque si connu ex 🐎 pour Ralph Lauren, 🐊 pour Lacoste, ⭐ pour Tommy etc] [Marque] [type article] [couleur] [taille]. Pro, accrocheur, optimise algo Vinted. Exemple : 🐎 Ralph Lauren Pull Col V Creme Vintage M",\n'
-    + '  "description": "Format exact avec emojis et sauts de ligne :\n\n'
-    + '✨ [Marque] — [type article] [modele si connu] ✨\n\n'
-    + '* Taille : [taille etiquette + conseil coupe si pertinent]\n'
+    + '  "titre": "max 60 caracteres. Format : [emoji marque] [Marque] [type article] [couleur] [taille]. Ex: 🐎 Ralph Lauren Pull Col V Creme M. Pro, accrocheur, optimise algo Vinted.",\n'
+    + '  "description": "Format exact avec emojis :\n\n'
+    + emoji + ' [Marque] — [type article] [modele si connu] ' + emoji + '\n\n'
+    + '* Taille : [taille + conseil coupe si pertinent]\n'
     + '* Couleur : [couleur + ambiance visuelle]\n'
-    + '* Matiere : [composition + qualite en 1 phrase]\n'
+    + '* Matiere : [' + matiereInfo + ' + qualite en 1 phrase]\n'
     + '* Etat : [' + etat + '] — description honnete et precise\n'
     + logosLine
     + '\n📏 Mesures a plat :\n\n' + mesuresBlock + '",\n'
-    + '  "hashtags_fr": "12 hashtags en francais. Uniquement type de vetement (toutes declinaisons du mot), marque, couleur, style, matiere. Format : #tag1 #tag2",\n'
-    + '  "hashtags_en": "12 hashtags en anglais. Memes concepts traduits. Format : #tag1 #tag2",\n'
-    + '  "hashtags_es": "9 hashtags en espagnol. Memes concepts traduits. Format : #tag1 #tag2",\n'
-    + '  "hashtags_it": "9 hashtags en italien. Memes concepts traduits. Format : #tag1 #tag2",\n'
-    + '  "hashtags_de": "8 hashtags en allemand. Memes concepts traduits. Format : #tag1 #tag2"\n'
+    + '  "hashtags_fr": "EXACTEMENT 15 hashtags en francais. Toutes declinaisons du type vetement (ex pull: #pull #pullhomme #pullfemme #pullvintage #pulllaine), marque (#ralphlauren #rl), couleur, matiere, style. Format : #tag1 #tag2 #tag3...",\n'
+    + '  "hashtags_en": "EXACTEMENT 15 hashtags en anglais. Memes concepts : type vetement en anglais toutes declinaisons (pull=sweater,knit,knitwear,jumper,pullover), marque, couleur, style, matiere. Format : #tag1 #tag2 #tag3...",\n'
+    + '  "hashtags_es": "EXACTEMENT 15 hashtags en espagnol. Type vetement toutes declinaisons en espagnol, marque, couleur, style. Format : #tag1 #tag2 #tag3...",\n'
+    + '  "hashtags_it": "EXACTEMENT 15 hashtags en italien. Type vetement toutes declinaisons en italien, marque, couleur, style. Format : #tag1 #tag2 #tag3...",\n'
+    + '  "hashtags_de": "EXACTEMENT 15 hashtags en allemand. Type vetement toutes declinaisons en allemand, marque, couleur, style. Format : #tag1 #tag2 #tag3..."\n'
     + '}';
 
   try {
     const res = await fetch('https://purple-surf-22a3.bneuman1702.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2500, messages: [{ role: 'user', content: prompt }] })
     });
 
     if (!res.ok) { const d = await res.json(); throw new Error(d?.error?.message || 'Erreur HTTP ' + res.status); }
@@ -272,7 +339,7 @@ async function generate() {
     }
 
     document.getElementById('r-titre').textContent = parsed.titre;
-    document.getElementById('r-chars').textContent = parsed.titre.length + ' / 60 caracteres';
+    document.getElementById('r-chars').textContent = parsed.titre.length + ' / 60 caractères';
 
     const hashtags = '\n\n'
       + parsed.hashtags_fr + '\n'
@@ -285,6 +352,7 @@ async function generate() {
 
     document.getElementById('err').style.display = 'none';
     document.getElementById('results').style.display = 'block';
+    document.getElementById('regen-btn').style.display = 'block';
     document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   } catch(e) {
@@ -296,6 +364,7 @@ async function generate() {
 
 function setLoading(on) {
   document.getElementById('gen-btn').disabled = on;
+  document.getElementById('regen-btn').disabled = on;
   document.getElementById('gen-btn').textContent = on ? '...' : '⚡ Générer l\'annonce';
   document.getElementById('spinner').style.display = on ? 'block' : 'none';
   if (on) document.getElementById('results').style.display = 'none';
