@@ -19,7 +19,6 @@
   .header h1 { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
   .header h1 span { color: var(--accent); }
   .header p { font-size: 13px; color: var(--muted); margin-top: 6px; }
-
   .api-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
   .api-bar label { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
   .api-bar input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 13px; outline: none; }
@@ -29,7 +28,6 @@
   .api-status.err { color: var(--red); }
   .clear-btn { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; cursor: pointer; white-space: nowrap; }
   .clear-btn:hover { color: var(--red); border-color: var(--red); }
-
   .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
   .section-title { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
   .form-label { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 7px; display: block; }
@@ -43,20 +41,15 @@
   select { cursor: pointer; }
   select option { background: #1e1e1e; }
   .hint { font-size: 11px; color: var(--muted); margin-top: 5px; font-family: 'DM Mono', monospace; }
-
   .signature-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--muted); line-height: 1.8; white-space: pre-wrap; }
-  .signature-preview strong { color: var(--text); font-weight: 400; }
-
   .gen-btn { width: 100%; padding: 14px; background: var(--accent); color: #0e0e0e; border: none; border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.1s; }
   .gen-btn:hover { opacity: 0.9; }
   .gen-btn:active { transform: scale(0.99); }
   .gen-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
   .results { margin-top: 20px; display: none; }
   .result-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 12px; animation: fadeUp 0.3s ease both; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
   .result-block:nth-child(2) { animation-delay: 0.06s; }
-  .result-block:nth-child(3) { animation-delay: 0.12s; }
   .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   .result-tag { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent-dim); padding: 3px 9px; border-radius: 20px; }
   .copy-btn { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
@@ -64,7 +57,6 @@
   .result-text { font-size: 14px; color: var(--text); line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
   .titre-text { font-size: 17px; font-weight: 500; line-height: 1.4; }
   .char-info { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 6px; }
-
   .spinner-wrap { text-align: center; padding: 20px 0; display: none; }
   .spinner { width: 28px; height: 28px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -77,7 +69,7 @@
 <div class="app">
   <div class="header">
     <h1>vinted<span>_</span>generator</h1>
-    <p>Titre · Description · 50 hashtags FR/EN/ES/IT — optimisés pour l'algo Vinted</p>
+    <p>Titre · Description · Hashtags FR/EN/ES/IT/DE — optimisés pour l'algo Vinted</p>
   </div>
 
   <div class="api-bar">
@@ -87,7 +79,6 @@
     <button class="clear-btn" onclick="clearKey()">effacer</button>
   </div>
 
-  <!-- ARTICLE -->
   <div class="form-card">
     <div class="section-title">Article</div>
     <div class="form-row">
@@ -128,17 +119,21 @@
         <input type="text" id="taille" placeholder="Ex: M, L, 42, 10 US..." />
       </div>
       <div>
-        <label class="form-label">Mesures réelles (à plat)</label>
-        <input type="text" id="mesures" placeholder="Ex: poitrine 54cm, longueur 65cm" />
+        <label class="form-label">Logos / Détails visuels</label>
+        <input type="text" id="logos" placeholder="Ex: logo brodé, patch dos, étiquette vintage..." />
       </div>
     </div>
     <div class="form-row">
-      <label class="form-label">Logos / Détails visuels</label>
-      <input type="text" id="logos" placeholder="Ex: logo brodé poitrine, patch dos, étiquette col vintage..." />
+      <label class="form-label">Mesures (à plat)</label>
+      <div class="grid3">
+        <input type="text" id="m-poitrine" placeholder="Largeur (ex: 54cm)" />
+        <input type="text" id="m-longueur" placeholder="Longueur (ex: 65cm)" />
+        <input type="text" id="m-manches" placeholder="Manches (ex: 62cm)" />
+      </div>
+
     </div>
   </div>
 
-  <!-- SIGNATURE -->
   <div class="form-card">
     <div class="section-title">Signature vendeur — aperçu</div>
     <div class="signature-preview" id="sig-preview"></div>
@@ -218,63 +213,80 @@ async function generate() {
   const etat = document.getElementById('etat').value;
   const prix = document.getElementById('prix').value;
   const taille = document.getElementById('taille').value;
-  const mesures = document.getElementById('mesures').value;
   const logos = document.getElementById('logos').value;
+  const mPoitrine = document.getElementById('m-poitrine').value;
+  const mLongueur = document.getElementById('m-longueur').value;
+  const mManches = document.getElementById('m-manches').value;
+  const mEpaules = document.getElementById('m-epaules').value;
+  const mTaille = document.getElementById('m-taille').value;
+  const mHanches = document.getElementById('m-hanches').value;
+
+  const mesuresList = [];
+  if (mPoitrine) mesuresList.push('* Poitrine / largeur : ' + mPoitrine);
+  if (mLongueur) mesuresList.push('* Longueur totale : ' + mLongueur);
+  if (mManches) mesuresList.push('* Longueur manches : ' + mManches);
+  if (mEpaules) mesuresList.push('* Largeur épaules : ' + mEpaules);
+  if (mTaille) mesuresList.push('* Tour de taille : ' + mTaille);
+  if (mHanches) mesuresList.push('* Tour de hanches : ' + mHanches);
+  const mesuresBlock = mesuresList.length > 0 ? mesuresList.join('\n') : '* Non renseignées — demandez si besoin';
 
   setLoading(true);
 
-  let infos = 'Article : ' + article + '\nCatégorie : ' + cat + '\nÉtat : ' + etat;
+  let infos = 'Article : ' + article + '\nCategorie : ' + cat + '\nEtat : ' + etat;
   if (prix) infos += '\nPrix : ' + prix;
-  if (taille) infos += '\nTaille étiquette : ' + taille;
-  if (mesures) infos += '\nMesures réelles à plat : ' + mesures;
-  if (logos) infos += '\nLogos / détails visuels : ' + logos;
+  if (taille) infos += '\nTaille etiquette : ' + taille;
+  if (logos) infos += '\nLogos et details visuels : ' + logos;
 
-  const logosLine = logos ? '* Logos & détails : [décrire logos, broderies, patches, étiquettes]\\n' : '';
-  const mesuresBlock = mesures
-    ? mesures.split(',').map(m => '* ' + m.trim()).join('\\n')
-    : '* Non renseignées — demandez si besoin';
+  const logosLine = logos ? '* Logos et details : ' + logos + '\n' : '';
 
-  const prompt = 'Tu es expert en vente Vinted et rédaction d\'annonces mode seconde main. Génère une annonce complète.\n\n'
+  const prompt = 'Tu es expert en vente Vinted et redaction annonces mode seconde main. Genere une annonce complete et optimisee.\n\n'
     + 'Informations :\n' + infos + '\n\n'
-    + 'Réponds UNIQUEMENT en JSON valide, sans markdown ni backticks :\n'
+    + 'Reponds UNIQUEMENT en JSON valide, sans markdown ni backticks :\n'
     + '{\n'
-    + '  "titre": "max 60 caractères. Priorité : marque + type article + couleur + taille. Accrocheur, direct, optimisé algo Vinted. Pas d\'adjectifs vagues.",\n'
-    + '  "description": "Format exact avec emojis et sauts de ligne :\\n\\n'
-    + '✨ [Marque] — [type article] [modèle si connu] ✨\\n\\n'
-    + '* Taille : [taille étiquette + conseil coupe si pertinent]\\n'
-    + '* Couleur : [couleur + ambiance visuelle]\\n'
-    + '* Matière : [composition + qualité en 1 phrase]\\n'
-    + '* État : [' + etat + '] — description honnête, valorise le charme si vintage\\n'
+    + '  "titre": "max 60 caracteres. Format : [emoji marque si connu ex 🐎 pour Ralph Lauren, 🐊 pour Lacoste, ⭐ pour Tommy etc] [Marque] [type article] [couleur] [taille]. Pro, accrocheur, optimise algo Vinted. Exemple : 🐎 Ralph Lauren Pull Col V Creme Vintage M",\n'
+    + '  "description": "Format exact avec emojis et sauts de ligne :\n\n'
+    + '✨ [Marque] — [type article] [modele si connu] ✨\n\n'
+    + '* Taille : [taille etiquette + conseil coupe si pertinent]\n'
+    + '* Couleur : [couleur + ambiance visuelle]\n'
+    + '* Matiere : [composition + qualite en 1 phrase]\n'
+    + '* Etat : [' + etat + '] — description honnete et precise\n'
     + logosLine
-    + '\\n📏 Mesures à plat :\\n\\n' + mesuresBlock + '",\n'
-    + '  "hashtags_fr": "15 hashtags en français uniquement. Concepts clés : type vêtement (toutes déclinaisons), marque, couleur, style. Utiles pour trouver l\'article. Format : #tag1 #tag2 sur une ligne.",\n'
-    + '  "hashtags_en": "15 hashtags en anglais uniquement. Mêmes concepts traduits. Ex pull = sweater knit knitwear. Format : #tag1 #tag2 sur une ligne.",\n'
-    + '  "hashtags_es": "10 hashtags en espagnol uniquement. Mêmes concepts traduits. Format : #tag1 #tag2 sur une ligne.",\n'
-    + '  "hashtags_it": "10 hashtags en italien uniquement. Mêmes concepts traduits. Format : #tag1 #tag2 sur une ligne."\n'
+    + '\n📏 Mesures a plat :\n\n' + mesuresBlock + '",\n'
+    + '  "hashtags_fr": "12 hashtags en francais. Uniquement type de vetement (toutes declinaisons du mot), marque, couleur, style, matiere. Format : #tag1 #tag2",\n'
+    + '  "hashtags_en": "12 hashtags en anglais. Memes concepts traduits. Format : #tag1 #tag2",\n'
+    + '  "hashtags_es": "9 hashtags en espagnol. Memes concepts traduits. Format : #tag1 #tag2",\n'
+    + '  "hashtags_it": "9 hashtags en italien. Memes concepts traduits. Format : #tag1 #tag2",\n'
+    + '  "hashtags_de": "8 hashtags en allemand. Memes concepts traduits. Format : #tag1 #tag2"\n'
     + '}';
 
   try {
     const res = await fetch('https://purple-surf-22a3.bneuman1702.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1800, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, messages: [{ role: 'user', content: prompt }] })
     });
 
-    if (!res.ok) { const d = await res.json(); throw new Error(d?.error?.message || `Erreur HTTP ${res.status}`); }
+    if (!res.ok) { const d = await res.json(); throw new Error(d?.error?.message || 'Erreur HTTP ' + res.status); }
 
     const data = await res.json();
     const text = data.content.map(i => i.text || '').join('');
     let parsed;
     try {
       parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
-    } catch(parseErr) {
-      throw new Error('Réponse API invalide — réessaie');
+    } catch(e) {
+      throw new Error('Reponse invalide — reessaie');
     }
 
     document.getElementById('r-titre').textContent = parsed.titre;
-    document.getElementById('r-chars').textContent = `${parsed.titre.length} / 60 caractères`;
+    document.getElementById('r-chars').textContent = parsed.titre.length + ' / 60 caracteres';
 
-    const hashtags = `\n\n🇫🇷 ${parsed.hashtags_fr}\n🇬🇧 ${parsed.hashtags_en}\n🇪🇸 ${parsed.hashtags_es}\n🇮🇹 ${parsed.hashtags_it}`;
+    const hashtags = '\n\n'
+      + parsed.hashtags_fr + '\n'
+      + parsed.hashtags_en + '\n'
+      + parsed.hashtags_es + '\n'
+      + parsed.hashtags_it + '\n'
+      + parsed.hashtags_de;
+
     document.getElementById('r-desc').textContent = parsed.description + '\n' + SIGNATURE + hashtags;
 
     document.getElementById('err').style.display = 'none';
@@ -282,7 +294,7 @@ async function generate() {
     document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   } catch(e) {
-    showErr(`Erreur : ${e.message}`);
+    showErr('Erreur : ' + e.message);
   } finally {
     setLoading(false);
   }
